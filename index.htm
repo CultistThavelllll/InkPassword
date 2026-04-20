@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Get into the inner world</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      user-select: none;
+    }
+    body {
+      background: white;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.5s ease;
+      margin: 0;
+      padding: 16px;
+    }
+    #app {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .hidden {
+      display: none !important;
+    }
+    body.black-bg {
+      background: black !important;
+    }
+    .main-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: black;
+    }
+    .input-field {
+      width: 280px;
+      padding: 12px 16px;
+      font-size: 1.2rem;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      text-align: center;
+      outline: none;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+    .input-field::placeholder {
+      color: #888;
+    }
+    .enter-btn {
+      background: #2ecc71;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 1.5rem;
+      padding: 12px 40px;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1e8b4c;
+      transition: 0.1s;
+      margin-bottom: 24px;
+      border: 0;
+      font-family: inherit;
+    }
+    .enter-btn:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+    .warning-text {
+      color: red;
+      font-size: 0.9rem;
+      max-width: 500px;
+    }
+    .hare-container {
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .hare-img {
+      width: 100px;
+      border-radius: 40px;
+    }
+    .hare-message-box {
+      background: rgba(255,255,255,0.95);
+      border: 2px solid black;
+      padding: 16px 20px;
+      border-radius: 20px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+      max-width: 400px;
+      box-shadow: 4px 4px 0 #aaa;
+    }
+    .hare-text {
+      color: black;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .close-hare-btn {
+      background: red;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: auto;
+      margin-top: 6px;
+    }
+    .hare-next-btn {
+      background: white;
+      color: black;
+      border: 2px solid black;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .bear-img {
+      width: 140px;
+      cursor: pointer;
+    }
+    .bear-dialogue {
+      background: black;
+      border: 3px solid white;
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      max-width: 450px;
+      margin: 20px auto;
+      position: relative;
+    }
+    .bear-header {
+      display: flex;
+      justify-content: space-between;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    .bear-text {
+      color: white;
+      font-size: 1.1rem;
+      text-align: left;
+    }
+    .arrow-btn {
+      background: none;
+      border: 2px solid white;
+      color: white;
+      font-size: 28px;
+      padding: 4px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-left: auto;
+      display: block;
+      margin-top: 16px;
+    }
+    .boss-img {
+      width: 200px;
+      transition: filter 0.05s;
+    }
+    .health-bar-container {
+      width: 280px;
+      height: 24px;
+      border: 2px solid white;
+      margin: 8px auto;
+      background: #222;
+      position: relative;
+    }
+    .health-fill {
+      height: 100%;
+      width: 100%;
+      background: #2ecc71;
+    }
+    .hp-text {
+      color: white;
+      font-weight: bold;
+      margin: 6px 0;
+    }
+    .ability-btn {
+      font-size: 1.5rem;
+      padding: 16px 24px;
+      margin: 10px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+    .red-ability { background: #c0392b; }
+    .pink-ability { background: #e84393; }
+    .inventory-popup {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: black;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 30px;
+      font-size: 1.3rem;
+      border: 1px solid white;
+      transition: bottom 0.4s;
+      z-index: 999;
+    }
+    .white-modal {
+      background: white;
+      border: 3px solid black;
+      padding: 30px;
+      border-radius: 30px;
+      max-width: 380px;
+      margin: auto;
+      position: relative;
+    }
+    .close-modal-btn {
+      background: red;
+      border: none;
+      color: white;
+      font-size: 22px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      cursor: pointer;
+    }
+    .glow-green {
+      color: #2ecc71;
+      text-shadow: 0 0 8px #2ecc71;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+    .preload-assets {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body id="mainBody">
+<div class="preload-assets">
+  <img src="https://www.dropbox.com/scl/fi/fes0zyp3oyyve44w304m4/IMG_20260306_131346_289.jpg?rlkey=jro96k0p793kia3hlb5wtteri&st=fplzqluo&dl=1">
+  <img src="https://www.dropbox.com/scl/fi/11a81w2069dfe8g1sqiml/Picsart_26-04-18_20-12-24-423.png?rlkey=j3etw3hizbc843lg93bh6cbhj&st=2j58hx0x&dl=1">
+  <img src="https://www.dropbox.com/scl/fi/2163xtbwqvfvw8r6s1dcf/IMG_20260304_225950_947.jpg?rlkey=i7z4h7204r8ptwnu6w65zb389&st=0f17innf&dl=1">
+  <audio src="https://www.dropbox.com/scl/fi/yo3xuw6c8otgvu8wm6h4m/4_5992265185136483856.mp3?rlkey=ncv8r2fj8b1ufwi4a2up6xzn6&st=i47p6lcg&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/2mgnxyh6jj4h0ex89ozdk/lv_0_20260419213251.mp3?rlkey=h1nk8ou65ef4qeielz666bhu8&st=sds6obnn&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/9t14tn7oikdq99ye5lkqx/Megabit3.ogg.mp3?rlkey=w7uy6lc87t79r6zu4x6zaybyv&st=12bz79v8&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/8el6eo5xomtjmdsgl81il/Happy-Jam-2-A-FNaF-World-Soundtrack.mp3?rlkey=74i7opfu06p5rpokcwiued2be&st=aw2jfr2l&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/3sul4itzoosrf6ntv7rt6/Megabit.ogg.mp3?rlkey=rxlpr3gfovren7purp281wuny&st=t57l52or&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/02sqh0ek1z0jdlgyztg6s/Biteable.ogg.mp3?rlkey=wjhfhcdrot0d1fv6y42i0vis5&st=nuq55yl8&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/keezlg5etc1i6zfwemvom/lv_0_20260419215648.mp3?rlkey=1fn4rifwgvg0hcevd30odu0pl&st=rjnf2dqa&dl=1"></audio>
+  <audio src="https://www.dropbox.com/scl/fi/5f8cnbcg49ywf2yx4615o/2_5296519189429785793.ogg?rlkey=02f961iae9axoqpv7he63zp7t&st=3361524y&dl=1"></audio>
+</div>
+<div id="app">
+  <div id="startScreen" class="screen">
+    <div class="hare-container" id="hareClicker">
+      <img src="https://www.dropbox.com/scl/fi/fes0zyp3oyyve44w304m4/IMG_20260306_131346_289.jpg?rlkey=jro96k0p793kia3hlb5wtteri&st=fplzqluo&dl=1" alt="hare" class="hare-img" id="hareImg">
+    </div>
+    <div id="hareMessageContainer"></div>
+    <div class="main-title">Get into the inner world</div>
+    <input type="text" id="passwordInput" class="input-field" placeholder="Enter the password" autocomplete="off">
+    <div id="passwordError" style="color:red; min-height:24px; font-weight:bold;"></div>
+    <button class="enter-btn" id="enterBtn">Enter</button>
+    <div class="warning-text">Warning: Attempting to obtain the site code or attempting to hack will result in a permanent ban.</div>
+  </div>
+
+  <div id="bearRealm" class="screen hidden">
+    <img src="https://www.dropbox.com/scl/fi/11a81w2069dfe8g1sqiml/Picsart_26-04-18_20-12-24-423.png?rlkey=j3etw3hizbc843lg93bh6cbhj&st=2j58hx0x&dl=1" alt="red bear" class="bear-img" id="bearImg">
+    <div id="bearDialogueBox" class="bear-dialogue hidden">
+      <div class="bear-header"><span>???</span></div>
+      <div id="bearDialogueText" class="bear-text">...</div>
+      <button id="bearNextBtn" class="arrow-btn">→</button>
+    </div>
+  </div>
+
+  <div id="bossBattleScreen" class="screen hidden">
+    <div style="min-height: 150px;">
+      <img src="https://www.dropbox.com/scl/fi/2163xtbwqvfvw8r6s1dcf/IMG_20260304_225950_947.jpg?rlkey=i7z4h7204r8ptwnu6w65zb389&st=0f17innf&dl=1" alt="boss" id="bossImage" class="boss-img">
+    </div>
+    <div class="health-bar-container">
+      <div id="bossHealthFill" class="health-fill" style="width:100%"></div>
+    </div>
+    <div id="bossHpText" class="hp-text">25000/25000</div>
+    <div style="margin: 20px 0;">
+      <div style="color:white;">Your HP</div>
+      <div class="health-bar-container" style="width:220px;">
+        <div id="playerHealthFill" class="health-fill" style="width:100%"></div>
+      </div>
+      <div id="playerHpText" class="hp-text">1000/1000</div>
+    </div>
+    <div id="abilityPanel">
+      <button id="megaBiteBtn" class="ability-btn red-ability">Mega Bite</button>
+      <button id="bashJamBtn" class="ability-btn pink-ability">Bash Jam</button>
+    </div>
+    <div id="bossAttackIndicator"></div>
+  </div>
+
+  <div id="endScreen" class="screen hidden"></div>
+  <div id="gameOverScreen" class="screen hidden"></div>
+
+  <div id="inventoryToast" class="inventory-popup hidden">+1 Item to your inventory Special Ticket — Incorrect Password</div>
+
+  <div id="errorModal" class="white-modal hidden" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1000;">
+    <div style="color:black; font-size:1.4rem; padding:10px;">Unknown error or incorrect password.</div>
+    <button id="closeErrorModal" class="close-modal-btn" style="position:relative; top:0; right:0; margin-top:20px;">✕</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    let STAGE = 'start';
+    const stageFlags = {
+      metBear: false, bearTalkComplete: false, errorTriggered: false, hareSecond: false,
+      bearFragmentDone: false, hareInventoryGiven: false, finalTicket: false, bossActive: false
+    };
+    function loadFlags(){
+      try{
+        const saved = localStorage.getItem('innerworld_flags');
+        if(saved) Object.assign(stageFlags, JSON.parse(saved));
+        if(localStorage.getItem('gameover_permanent') === '1') STAGE = 'gameover_perm';
+        if(localStorage.getItem('game_completed') === '1') STAGE = 'completed';
+      }catch(e){}
+    }
+    function saveFlags(){
+      localStorage.setItem('innerworld_flags', JSON.stringify(stageFlags));
+    }
+    loadFlags();
+
+    const body = document.getElementById('mainBody');
+    const startScreen = document.getElementById('startScreen');
+    const bearRealm = document.getElementById('bearRealm');
+    const bossScreen = document.getElementById('bossBattleScreen');
+    const endScreen = document.getElementById('endScreen');
+    const gameOverDiv = document.getElementById('gameOverScreen');
+    const passInput = document.getElementById('passwordInput');
+    const passError = document.getElementById('passwordError');
+    const enterBtn = document.getElementById('enterBtn');
+    const hareMsgContainer = document.getElementById('hareMessageContainer');
+    const hareImg = document.getElementById('hareImg');
+    const bearImg = document.getElementById('bearImg');
+    const bearDialogueBox = document.getElementById('bearDialogueBox');
+    const bearText = document.getElementById('bearDialogueText');
+    const bearNext = document.getElementById('bearNextBtn');
+    const errorModal = document.getElementById('errorModal');
+    const closeError = document.getElementById('closeErrorModal');
+    const toast = document.getElementById('inventoryToast');
+
+    let windAudio = null;
+    let bossMusic = null;
+    let bossAttackInterval = null;
+    let bossAnimInterval = null;
+    
+    function stopAllAudio(){
+      if(windAudio) { windAudio.pause(); windAudio = null; }
+      if(bossMusic) { bossMusic.pause(); bossMusic = null; }
+    }
+    
+    function clearBossIntervals(){
+      if(bossAttackInterval) clearInterval(bossAttackInterval);
+      if(bossAnimInterval) clearInterval(bossAnimInterval);
+      bossAttackInterval = null;
+      bossAnimInterval = null;
+    }
+
+    let bearStep = 0;
+
+    function enterBearWorld(playWind = true){
+      stopAllAudio();
+      clearBossIntervals();
+      startScreen.classList.add('hidden');
+      bearRealm.classList.remove('hidden');
+      bossScreen.classList.add('hidden');
+      if(playWind){
+        windAudio = new Audio('https://www.dropbox.com/scl/fi/yo3xuw6c8otgvu8wm6h4m/4_5992265185136483856.mp3?rlkey=ncv8r2fj8b1ufwi4a2up6xzn6&st=i47p6lcg&dl=1');
+        windAudio.loop = true;
+        windAudio.play().catch(()=>{});
+      }
+      bearStep = 0;
+      bearDialogueBox.classList.add('hidden');
+      body.style.background = 'white';
+    }
+
+    function handlePassword(val){
+      const pwd = val.trim();
+      passError.innerText = '';
+      if(STAGE === 'completed' || STAGE === 'gameover_perm') return;
+
+      if(pwd === 'DOCTYPE'){
+        if(!stageFlags.metBear){
+          stageFlags.metBear = true;
+          saveFlags();
+          body.classList.add('black-bg');
+          startScreen.style.opacity = '0';
+          setTimeout(() => {
+            enterBearWorld(true);
+            body.classList.remove('black-bg');
+          }, 3000);
+          return;
+        } else {
+          if(stageFlags.metBear && !stageFlags.bearFragmentDone && !stageFlags.bossActive){
+            if(!stageFlags.errorTriggered){
+              errorModal.classList.remove('hidden');
+              stageFlags.errorTriggered = true;
+              saveFlags();
+            } else {
+              passError.innerText = 'incorrect password';
+            }
+            return;
+          }
+          passError.innerText = 'incorrect password'; return;
+        }
+      }
+      if(pwd === 'D'){
+        if(stageFlags.errorTriggered && !stageFlags.bearFragmentDone && !stageFlags.bossActive){
+          stageFlags.bearFragmentDone = true;
+          saveFlags();
+          body.classList.add('black-bg');
+          setTimeout(() => {
+            enterBearWorld(true);
+            body.classList.remove('black-bg');
+            bearStep = 20;
+          }, 3000);
+          return;
+        } else { passError.innerText = 'incorrect password'; return; }
+      }
+      if(pwd === '3908'){
+        if(stageFlags.bearFragmentDone && !stageFlags.hareInventoryGiven){
+          passError.innerText = 'Password is incorrect.';
+          return;
+        }
+        passError.innerText = 'Password is incorrect.'; return;
+      }
+      if(pwd === 'Incorrect Password'){
+        if(stageFlags.hareInventoryGiven && stageFlags.finalTicket && !stageFlags.bossActive){
+          stageFlags.bossActive = true;
+          saveFlags();
+          startBossSequence();
+          return;
+        }
+        passError.innerText = 'Password is incorrect.'; return;
+      }
+      passError.innerText = 'Password is incorrect.';
+    }
+
+    function startBossSequence(){
+      stopAllAudio();
+      clearBossIntervals();
+      body.style.background = 'black';
+      startScreen.classList.add('hidden'); bearRealm.classList.add('hidden');
+      let textElement = document.createElement('div');
+      textElement.style.color = 'white'; textElement.style.fontSize = '2rem'; textElement.style.position = 'fixed'; textElement.style.top = '50%'; textElement.style.left = '50%'; textElement.style.transform = 'translate(-50%,-50%)';
+      document.body.appendChild(textElement);
+      const texts = ["I didn't seem to be expecting guests.", "WHAT? WHAT IDIOT GOT INTO MY OFFICE?!", "HOW DID YOU GET HERE, YOU IDIOT PIECE", "THERE IS NO TIME TO THINK, YOU'RE COOKED."];
+      let idx = 0;
+      function nextText(){
+        if(idx < texts.length){ textElement.innerText = texts[idx]; idx++; setTimeout(nextText, 5000); }
+        else { textElement.remove(); launchBossFight(); }
+      }
+      nextText();
+    }
+
+    let bossHp = 25000, playerHp = 1000;
+    let bossBattleActive = false;
+    let abilityCooldown = false;
+    
+    function launchBossFight(){
+      body.style.background = 'white';
+      bossScreen.classList.remove('hidden');
+      bearRealm.classList.add('hidden'); startScreen.classList.add('hidden');
+      bossMusic = new Audio('https://www.dropbox.com/scl/fi/2mgnxyh6jj4h0ex89ozdk/lv_0_20260419213251.mp3?rlkey=h1nk8ou65ef4qeielz666bhu8&st=sds6obnn&dl=1');
+      bossMusic.loop = true; 
+      bossMusic.play().catch(()=>{});
+      bossHp = 25000; playerHp = 1000;
+      updateBossUI(); updatePlayerUI();
+      bossBattleActive = true;
+      
+      let img = document.getElementById('bossImage');
+      let pos = 0, dir = 1;
+      bossAnimInterval = setInterval(()=>{ 
+        if(!bossBattleActive) return; 
+        pos += dir * 2; 
+        if(pos > 8) dir = -1; 
+        if(pos < -8) dir = 1; 
+        img.style.transform = `translateY(${pos}px)`; 
+      }, 50);
+      
+      bossAttackInterval = setInterval(()=>{ 
+        if(bossBattleActive && bossHp > 0 && playerHp > 0) bossAttack(); 
+      }, 8000);
+      
+      abilityCooldown = false;
+      document.getElementById('abilityPanel').style.opacity = '1';
+      document.getElementById('megaBiteBtn').onclick = ()=> useMegaBite();
+      document.getElementById('bashJamBtn').onclick = ()=> useBashJam();
+    }
+    
+    function updateBossUI(){ 
+      const percent = (bossHp / 25000) * 100;
+      document.getElementById('bossHealthFill').style.width = percent + '%'; 
+      document.getElementById('bossHpText').innerText = bossHp + '/25000'; 
+    }
+    function updatePlayerUI(){ 
+      const percent = (playerHp / 1000) * 100;
+      document.getElementById('playerHealthFill').style.width = percent + '%'; 
+      document.getElementById('playerHpText').innerText = playerHp + '/1000'; 
+    }
+    
+    function useMegaBite(){
+      if(!bossBattleActive || abilityCooldown) return;
+      new Audio('https://www.dropbox.com/scl/fi/9t14tn7oikdq99ye5lkqx/Megabit3.ogg.mp3?rlkey=w7uy6lc87t79r6zu4x6zaybyv&st=12bz79v8&dl=1').play();
+      const img = document.getElementById('bossImage');
+      img.style.filter = 'brightness(1.5) sepia(1) hue-rotate(-40deg)';
+      setTimeout(()=> img.style.filter = '', 50);
+      bossHp = Math.max(0, bossHp - 800); 
+      updateBossUI();
+      if(bossHp <= 0) { winBoss(); return; }
+      startCooldown();
+    }
+    
+    function useBashJam(){
+      if(!bossBattleActive || abilityCooldown) return;
+      new Audio('https://www.dropbox.com/scl/fi/8el6eo5xomtjmdsgl81il/Happy-Jam-2-A-FNaF-World-Soundtrack.mp3?rlkey=74i7opfu06p5rpokcwiued2be&st=aw2jfr2l&dl=1').play();
+      body.style.backgroundColor = '#ffb6c1';
+      setTimeout(()=> body.style.backgroundColor = 'white', 1500);
+      playerHp = Math.min(1000, playerHp + 250); 
+      updatePlayerUI();
+      startCooldown();
+    }
+    
+    function startCooldown(){
+      abilityCooldown = true;
+      document.getElementById('abilityPanel').style.opacity = '0.5';
+      setTimeout(()=> { 
+        abilityCooldown = false; 
+        if(bossBattleActive) document.getElementById('abilityPanel').style.opacity = '1'; 
+      }, 5000);
+    }
+    
+    function bossAttack(){
+      if(!bossBattleActive) return;
+      const ind = document.getElementById('bossAttackIndicator');
+      ind.innerHTML = '💣';
+      setTimeout(()=> ind.innerHTML = '', 500);
+      new Audio('https://www.dropbox.com/scl/fi/3sul4itzoosrf6ntv7rt6/Megabit.ogg.mp3?rlkey=rxlpr3gfovren7purp281wuny&st=t57l52or&dl=1').play();
+      body.style.backgroundColor = 'white';
+      playerHp = Math.max(0, playerHp - 350); 
+      updatePlayerUI();
+      if(playerHp <= 0){ loseGame(); }
+    }
+    
+    function winBoss(){
+      bossBattleActive = false; 
+      stopAllAudio();
+      clearBossIntervals();
+      new Audio('https://www.dropbox.com/scl/fi/keezlg5etc1i6zfwemvom/lv_0_20260419215648.mp3?rlkey=1fn4rifwgvg0hcevd30odu0pl&st=rjnf2dqa&dl=1').play();
+      let img = document.getElementById('bossImage'); 
+      let shake = setInterval(()=> img.style.transform = `translate(${Math.random()*8-4}px, ${Math.random()*8-4}px)`, 30);
+      setTimeout(()=> { 
+        clearInterval(shake); 
+        img.style.display='none'; 
+        body.style.background='white';
+        new Audio('https://www.dropbox.com/scl/fi/5f8cnbcg49ywf2yx4615o/2_5296519189429785793.ogg?rlkey=02f961iae9axoqpv7he63zp7t&st=3361524y&dl=1').play();
+        endScreen.innerHTML = `<div style="color:black; font-size:1.8rem;">Congratulations, you've destroyed the site by getting a fragment that allows you to destroy the server.</div><div class="glow-green" style="font-size:2.5rem; margin:30px;">Good Ending</div><div style="color:#555;">Developer — NICK_HATO</div>`;
+        endScreen.classList.remove('hidden'); 
+        bossScreen.classList.add('hidden');
+        localStorage.setItem('game_completed', '1'); 
+        STAGE='completed';
+        setTimeout(()=> { location.reload(); }, 17000);
+      }, 5000);
+    }
+    
+    function loseGame(){
+      bossBattleActive = false; 
+      stopAllAudio();
+      clearBossIntervals();
+      new Audio('https://www.dropbox.com/scl/fi/02sqh0ek1z0jdlgyztg6s/Biteable.ogg.mp3?rlkey=wjhfhcdrot0d1fv6y42i0vis5&st=nuq55yl8&dl=1').play();
+      localStorage.setItem('gameover_permanent', '1'); 
+      STAGE='gameover_perm';
+      gameOverDiv.innerHTML = `<div style="color:red; font-size:3rem;">Game Over</div><div style="color:white;">You have been killed by the boss and this site is no longer available to you.</div>`;
+      gameOverDiv.classList.remove('hidden'); 
+      bossScreen.classList.add('hidden'); 
+      body.style.background='black';
+    }
+
+    function showHareMessage(text, withNext, nextCb){
+      hareMsgContainer.innerHTML = '';
+      let box = document.createElement('div'); box.className = 'hare-message-box';
+      let p = document.createElement('div'); p.className = 'hare-text'; p.innerText = text;
+      box.appendChild(p);
+      if(withNext){
+        let btn = document.createElement('button'); btn.className = 'hare-next-btn'; btn.innerText = '→';
+        btn.onclick = ()=>{ hareMsgContainer.innerHTML = ''; if(nextCb) nextCb(); };
+        box.appendChild(btn);
+      } else {
+        let close = document.createElement('button'); close.className = 'close-hare-btn'; close.innerHTML = '✕';
+        close.onclick = ()=> hareMsgContainer.innerHTML = '';
+        box.appendChild(close);
+      }
+      hareMsgContainer.appendChild(box);
+    }
+
+    hareImg.onclick = ()=>{
+      if(STAGE === 'gameover_perm' || STAGE === 'completed') return;
+      if(!stageFlags.metBear){
+        showHareMessage("Sup, I'm a purple hare and I'm part of this site and I know perfectly well that you're trying to dig up a special key, namely a code. I'd like to help, but first you need to find one thing and bring it to me here. I can't help you with anything right now.");
+        return;
+      }
+      if(stageFlags.metBear && stageFlags.errorTriggered && !stageFlags.bearFragmentDone){
+        showHareMessage("Hm? Why did you come back to me again? I told you what you needed to do!");
+        return;
+      }
+      if(stageFlags.bearFragmentDone && !stageFlags.hareInventoryGiven){
+        let messages = [
+          "Where do you always disappear to? I always see you teleporting somewhere.",
+          "Wait... Have you talked to Heather?",
+          "If you don't know who it is, then it's one friend, namely the red bear. Didn't he tell you anything?",
+          "You shouldn't talk to him, he can betray you, he often tells his victims that he is locked in this site and has been there for 16 years, but that's not true, he is not the friend you perceive.",
+          "In general, I'm sorry that I was rude to you earlier, but I see that you are a smart player, so if that's the case, I'm ready to give you what you need. I no longer need the item you're looking for.",
+          "Keep it and don't give it to anyone and hide it from everyone."
+        ];
+        let index = 0;
+        function nextHare(){
+          if(index < messages.length){
+            showHareMessage(messages[index], true, ()=>{ index++; nextHare(); });
+          } else {
+            hareMsgContainer.innerHTML = '';
+            stageFlags.hareInventoryGiven = true; stageFlags.finalTicket = true; saveFlags();
+            toast.classList.remove('hidden');
+            setTimeout(()=> toast.classList.add('hidden'), 5000);
+          }
+        }
+        nextHare();
+      }
+    };
+
+    bearImg.onclick = ()=>{
+      if(!bearRealm.classList.contains('hidden')){
+        if(bearStep === 0){
+          bearDialogueBox.classList.remove('hidden'); bearText.innerText = '...'; bearStep = 1;
+          bearNext.onclick = ()=>{
+            if(bearStep === 1){ bearText.innerText = "Don't ask where you are and who I am and in general, leave me alone."; bearStep = 2; }
+            else if(bearStep === 2){ bearDialogueBox.classList.add('hidden'); bearStep = 3; stageFlags.bearTalkComplete = true; saveFlags(); }
+          };
+        } else if(bearStep === 20){
+          bearDialogueBox.classList.remove('hidden');
+          let frags = [
+            "You again? Oh, okay, so since you came for this, I can give it to you, but before I give it to you, I'll give you a fragment that will damage this site's system.",
+            "I am a hostage in this site and I have been suffering in this cold place for almost 16 years, don’t try to save me, just destroy this site, I will help you get into the office of the boss who owns this site.",
+            "I don't remember the exact code for the destruction fragment, but try entering \"3908\" there - maybe it will activate something."
+          ];
+          let fIdx = 0;
+          bearText.innerText = frags[0];
+          bearNext.onclick = ()=>{
+            fIdx++;
+            if(fIdx < frags.length){ bearText.innerText = frags[fIdx]; }
+            else { bearDialogueBox.classList.add('hidden'); bearStep = 21; stageFlags.finalTicket = true; saveFlags(); }
+          };
+        } else if(bearStep === 21){
+          bearDialogueBox.classList.remove('hidden'); bearText.innerText = "What? Any questions? I told you not to try to save me, just get it done before it's too late!!";
+          bearNext.onclick = ()=>{ bearDialogueBox.classList.add('hidden'); bearStep = 22; };
+        } else { bearDialogueBox.classList.add('hidden'); }
+      }
+    };
+
+    enterBtn.onclick = ()=> handlePassword(passInput.value);
+    closeError.onclick = ()=> { errorModal.classList.add('hidden'); saveFlags(); };
+    
+    window.onload = ()=>{
+      if(STAGE === 'gameover_perm'){ 
+        gameOverDiv.classList.remove('hidden'); 
+        startScreen.classList.add('hidden'); 
+      }
+      else if(STAGE === 'completed'){ 
+        location.reload(); 
+      }
+    };
+  })();
+</script>
+</body>
+</html>
